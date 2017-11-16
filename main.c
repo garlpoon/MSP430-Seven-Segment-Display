@@ -7,14 +7,6 @@
 // It appears that if B3 position == 1, the display will be brighter.  Try this setting later.
 uint8_t brightnessArray[8] = {0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7};
 
-//Space Invader
-//uint8_t greenArray[8] = {0x98, 0x5C, 0xB6, 0x5F, 0x5F, 0xB6, 0x5C, 0x98};
-//uint8_t redArray[8] = {0x00, 0x00, 0x08, 0x00, 0x00, 0x08, 0x00, 0x00};
-
-// Test Pattern 1
-//uint8_t greenArray[8] = {0xCC, 0xCC, 0x33, 0x33, 0xCC, 0xCC, 0x33, 0x33};
-//uint8_t redArray[8] = {0x3C, 0x3C, 0x0F, 0x0F, 0xC3, 0xC3, 0xF0, 0xF0};
-
 // Test Pattern 2
 uint8_t greenArray[8] = {0xFF, 0x81, 0x81, 0x89, 0x91, 0x81, 0x81, 0xFF};
 uint8_t redArray[8] = {0x00, 0x7E, 0x42, 0x4A, 0x52, 0x42, 0x7E, 0x00};
@@ -32,25 +24,11 @@ int main(void)
     //****************************************************************************************
 
     // Assign I2C pins to USCI_B1
-    GPIO_setAsPeripheralModuleFunctionOutputPin(
-            GPIO_PORT_P4,
-            GPIO_PIN0 + GPIO_PIN1 + GPIO_PIN2
-            );
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P4, GPIO_PIN0 + GPIO_PIN1 + GPIO_PIN2);
 
     // Init. master device
     // Note: The HT16K33 I2C LED Backpack datasheet states that the fSCL Clock Frequency should be 400kHz
     //       and that the MPU host is the master (and not slave).
-
-
-    /*
-    void USCI_B_I2C_initMaster(uint16_t baseAddress, USCI_B_I2C_initMasterParam *param)
-
-    USCI_B_I2C_masterInit(USCI_B1_BASE,
-                          USCI_B_I2C_CLOCKSOURCE_SMCLK,
-                          UCS_getSMCLK(),
-                          USCI_B_I2C_SET_DATA_RATE_400KBPS
-                          );
-    */
     
     USCI_B_I2C_initMasterParam parameter = { 0 };
     parameter.dataRate |= USCI_B_I2C_SET_DATA_RATE_400KBPS;
@@ -59,14 +37,10 @@ int main(void)
     USCI_B_I2C_initMaster(USCI_B1_BASE, &parameter);
 
     // Specify slave address
-    USCI_B_I2C_setSlaveAddress(USCI_B1_BASE,
-                               LED_MATRIX_SLAVE_ADDRESS
-                               );
+    USCI_B_I2C_setSlaveAddress(USCI_B1_BASE, LED_MATRIX_SLAVE_ADDRESS);
 
     // Set in transmit mode
-    USCI_B_I2C_setMode(USCI_B1_BASE,
-                       USCI_B_I2C_TRANSMIT_MODE
-                       );
+    USCI_B_I2C_setMode(USCI_B1_BASE, USCI_B_I2C_TRANSMIT_MODE);
 
     USCI_B_I2C_enable(USCI_B1_BASE);
 
@@ -76,9 +50,6 @@ int main(void)
 
     // Enable the display and disable blinking for the Holtek HT16K33 LED Controller
     USCI_B_I2C_masterMultiByteSendStart(USCI_B1_BASE,0x81);  // D={1}, B1B0={0} Continuous
-//    USCI_B_I2C_masterMultiByteSendStart(USCI_B1_BASE,0x83);  // D={1}, B1B0={0} 2Hz
-//    USCI_B_I2C_masterMultiByteSendStart(USCI_B1_BASE,0x85);  // D={1}, B1B0={0} 1Hz
-//    USCI_B_I2C_masterMultiByteSendStart(USCI_B1_BASE,0x87);  // D={1}, B1B0={0} 0.5Hz
     USCI_B_I2C_masterMultiByteSendStop(USCI_B1_BASE);
 
     // Set the dimming for the Holtek HT16K33 LED Controller
