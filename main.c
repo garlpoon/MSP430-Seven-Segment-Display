@@ -3,15 +3,10 @@
 
 #define SSEG_SLAVE_ADDRESS 0x70 // Default for Holtek HT16K33 LED Controller
 
-// Note: From the Holtek HT16K33 LED Controller datasheet, this brightness array has B3 position=0.
-// It appears that if B3 position == 1, the display will be brighter.  Try this setting later.
-
 uint8_t brightnessArray[8] = {0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7};
 
-// Test Pattern 2
 uint8_t greenArray[8] = {0xFF, 0x81, 0x81, 0x89, 0x91, 0x81, 0x81, 0xFF};
 uint8_t redArray[8] = {0x00, 0x7E, 0x42, 0x4A, 0x52, 0x42, 0x7E, 0x00};
-
 uint8_t counter;
 uint8_t column;
 uint8_t address;
