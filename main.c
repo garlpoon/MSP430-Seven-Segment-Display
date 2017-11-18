@@ -5,23 +5,19 @@
 
 uint8_t brightnessArray[8] = {0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7};
 uint16_t displaybuffer[8];
-uint8_t i;
+bool flag = false;
+int i;
 
 int main(void)
 {
-    for(i = 0; i < 8; i++)
-    {
-        displaybuffer[i] = 0x00;
-    }
-
-    displaybuffer[0] = 0x40; // - character
-    displaybuffer[1] = 0x3F; // 0 character
-    // buffer index 2 is for the comma
-    displaybuffer[2] = 0x00; // no character
-    displaybuffer[3] = 0x06; // 1 character
-    displaybuffer[4] = 0x5B; // 2 character
-
     WDT_A_hold(WDT_A_BASE); // Disable watchdog timer
+
+    // buffer index 2 is for the comma
+    displaybuffer[0] = 0x40; // - character
+    displaybuffer[1] = 0x40; // - character
+    displaybuffer[2] = 0x00;  // no comma
+    displaybuffer[3] = 0x40; // - character
+    displaybuffer[4] = 0x40; // - character
 
     // Assign I2C pins to USCI_B1
     GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P4, GPIO_PIN0 + GPIO_PIN1 + GPIO_PIN2);
@@ -52,16 +48,40 @@ int main(void)
     USCI_B_I2C_masterSendMultiByteStart(USCI_B1_BASE, brightnessArray[0]);
     USCI_B_I2C_masterSendMultiByteStop(USCI_B1_BASE);
 
-
+    /*
     USCI_B_I2C_masterSendMultiByteStart(USCI_B1_BASE, 0x00);
 
     for (i=0; i<8; i++) {
+
         USCI_B_I2C_masterSendMultiByteNext(USCI_B1_BASE, displaybuffer[i] & 0xFF);
         USCI_B_I2C_masterSendMultiByteNext(USCI_B1_BASE, displaybuffer[i] >> 8);
+
     }
-
     USCI_B_I2C_masterSendMultiByteStop(USCI_B1_BASE);
+    */
 
 
-    for(;;);
+    for(;;)
+    {
+        if(flag)
+        {
+            displaybuffer[0] = 0x00; // - character
+        }
+        else
+        {
+            displaybuffer[0] = 0x7F; // - character
+        }
+
+        USCI_B_I2C_masterSendMultiByteStart(USCI_B1_BASE, 0x00);
+
+        for (i=0; i<8; i++) {
+
+            USCI_B_I2C_masterSendMultiByteNext(USCI_B1_BASE, displaybuffer[i] & 0xFF);
+            USCI_B_I2C_masterSendMultiByteNext(USCI_B1_BASE, displaybuffer[i] >> 8);
+
+        }
+        USCI_B_I2C_masterSendMultiByteStop(USCI_B1_BASE);
+
+        flag = !flag;
+    }
 }
