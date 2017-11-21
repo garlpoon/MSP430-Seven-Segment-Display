@@ -4,9 +4,26 @@
 #define SSEG_SLAVE_ADDRESS 0x70 // Default address for HT16K33
 
 uint8_t brightnessArray[8] = {0xE0, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE7};
+uint8_t numbertable[] = { 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F}; // outputs value equal to index in SSEG form
 uint16_t displaybuffer[8];
 bool flag = false;
 int i;
+
+void writeToDisplay()
+{
+    int i;
+
+    USCI_B_I2C_masterSendMultiByteStart(USCI_B1_BASE, 0x00);
+
+    for (i=0; i<8; i++) {
+
+        USCI_B_I2C_masterSendMultiByteNext(USCI_B1_BASE, displaybuffer[i] & 0xFF);
+        USCI_B_I2C_masterSendMultiByteNext(USCI_B1_BASE, displaybuffer[i] >> 8);
+
+    }
+
+    USCI_B_I2C_masterSendMultiByteStop(USCI_B1_BASE);
+}
 
 int main(void)
 {
@@ -15,7 +32,7 @@ int main(void)
     // buffer index 2 is for the comma
     displaybuffer[0] = 0x40; // - character
     displaybuffer[1] = 0x40; // - character
-    displaybuffer[2] = 0x00;  // no comma
+    displaybuffer[2] = 0x00; // no comma
     displaybuffer[3] = 0x40; // - character
     displaybuffer[4] = 0x40; // - character
 
@@ -69,18 +86,11 @@ int main(void)
         }
         else
         {
-            displaybuffer[0] = 0x7F; // - character
+            displaybuffer[0] = numbertable[9]; // - character
         }
 
-        USCI_B_I2C_masterSendMultiByteStart(USCI_B1_BASE, 0x00);
+        writeToDisplay();
 
-        for (i=0; i<8; i++) {
-
-            USCI_B_I2C_masterSendMultiByteNext(USCI_B1_BASE, displaybuffer[i] & 0xFF);
-            USCI_B_I2C_masterSendMultiByteNext(USCI_B1_BASE, displaybuffer[i] >> 8);
-
-        }
-        USCI_B_I2C_masterSendMultiByteStop(USCI_B1_BASE);
 
         flag = !flag;
     }
