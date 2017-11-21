@@ -8,4 +8,5 @@ uses driverlib.h. The code uses a data buffer to provide the right information f
 display. The array indices for the buffer that tell the display which numbers to present are 0, 1,
 3, and 4. Index 2 is used to tell the display whether or not to show the comma in between. 
 
-
+# Hardware
+The MSP430 pins 4.1 and 4.2 are used for their SDA and SCL pins respectively.
