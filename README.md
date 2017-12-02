@@ -10,3 +10,6 @@ display. The array indices for the buffer that tell the display which numbers to
 
 # Hardware
 The MSP430 pins 4.1 and 4.2 are used for their SDA and SCL pins respectively.
+
+# Black box diagram
+The XML file is for draw.io. It shows my intended hardware design for the future.
